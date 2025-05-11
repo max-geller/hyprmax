@@ -1,55 +1,64 @@
 # Development Roadmap
 
-## Phase 1: Core Infrastructure
+## Phase 1: Core Infrastructure ✅
 
 - [x] Basic TUI setup with bubbletea
 - [x] Initial project structure
-- [ ] Config file parsing
-  - [ ] Read hyprland.conf
-  - [ ] Parse all standard Hyprland settings
-  - [ ] Handle comments and includes
-- [ ] Error handling and logging system
+- [x] Config file parsing
+  - [x] Read hyprland.conf
+  - [x] Parse all standard Hyprland settings
+  - [x] Handle comments and includes
+- [x] Error handling and logging system
+- [x] Validation system for config values
+- [x] Config backup system
 
-## Phase 2: Basic UI Features
+## Phase 2: Basic UI Features (In Progress)
 
-- [ ] Multi-page navigation system
-  - [ ] Main menu
-  - [ ] Settings subpages
-  - [ ] Back navigation
-- [ ] Split-view layout
-  - [ ] Settings navigation pane
-  - [ ] Settings detail view
-- [ ] Status bar with key bindings
-- [ ] Error and notification display
+- [x] Multi-page navigation system
+- [x] Split-view layout
+- [x] Status bar with key bindings
+- [x] Error and notification display
+  - [x] Basic error messages
+  - [x] Help system
+  - [ ] Save confirmations
+- [ ] Context-sensitive help
+  - [x] Basic help text
+  - [ ] Detailed documentation
+  - [ ] Examples
 
-## Phase 3: Settings Management
+## Phase 3: Settings Management (In Progress)
 
-- [ ] General Settings
-  - [ ] Display current values
-  - [ ] Edit capabilities
-  - [ ] Validation
-- [ ] Window Rules Management
-  - [ ] List existing rules
-  - [ ] Add/Edit/Delete rules
-  - [ ] Rule validation
-- [ ] Keybindings Management
-  - [ ] View current bindings
-  - [ ] Add/Edit/Delete bindings
+- [x] General Settings
+- [x] Decoration Settings
+- [ ] Window Rules Management (In Progress)
+  - [x] Basic structure
+  - [x] Rule validation
+  - [ ] Rule editor interface
+  - [ ] Rule testing
+- [ ] Keybindings Management (In Progress)
+  - [x] Basic structure
+  - [x] Keybind validation
   - [ ] Conflict detection
+  - [ ] Binding editor interface
 - [ ] Animation Settings
-  - [ ] Enable/Disable animations
-  - [ ] Customize animation parameters
+- [ ] Input Settings
+
+## Immediate Next Steps
+1. Complete the window rules editor interface
+2. Implement keybinding conflict detection
+3. Add comprehensive validation for all settings
+4. Enhance error display with more context
 
 ## Phase 4: Advanced Features
 
 - [ ] Live Preview
   - [ ] Real-time setting updates
   - [ ] Preview window
-- [ ] Configuration Profiles
-  - [ ] Save/Load profiles
+- [x] Configuration Profiles
+  - [x] Save/Load profiles
   - [ ] Import/Export settings
-- [ ] Backup System
-  - [ ] Auto-backup before changes
+- [x] Backup System
+  - [x] Auto-backup before changes
   - [ ] Restore points
 - [ ] Search and Filter
   - [ ] Search settings
@@ -70,6 +79,7 @@
 ## Phase 6: Polish & Distribution
 
 - [ ] Documentation
+  - [x] Basic README
   - [ ] User manual
   - [ ] Configuration guide
   - [ ] Developer docs
@@ -77,13 +87,19 @@
   - [ ] Package creation
   - [ ] Distribution packages
 - [ ] Testing
-  - [ ] Unit tests
+  - [x] Basic validation tests
   - [ ] Integration tests
   - [ ] User testing
 - [ ] Performance Optimization
   - [ ] Memory usage
   - [ ] Startup time
   - [ ] Response time
+
+## Current Focus
+1. Complete remaining section models (Input, Animations, etc.)
+2. Implement error display in UI
+3. Add comprehensive validation for all settings
+4. Complete window rules and keybindings management
 
 ## Future Considerations
 

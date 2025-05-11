@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/max-geller/hyprmax/config"
+	"github.com/max-geller/hyprmax/ui"
 )
 
 var (
@@ -31,6 +32,8 @@ type model struct {
 	selected  map[int]struct{}
 	err       error
 	page      page
+	settings  ui.SettingsModel
+	saveChan  chan<- config.HyprlandConfig
 }
 
 type page int
@@ -44,7 +47,7 @@ const (
 	pageWindowRules
 )
 
-func initialModel() model {
+func initialModel(saveChan chan<- config.HyprlandConfig) model {
 	// Use test mode during development
 	cfg, err := config.LoadConfig("", true)
 	return model{
@@ -61,6 +64,7 @@ func initialModel() model {
 		},
 		selected: make(map[int]struct{}),
 		page:     pageMain,
+		saveChan: saveChan,
 	}
 }
 
@@ -71,6 +75,16 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		if m.page != pageMain {
+			// Handle settings pages
+			var newSettings tea.Model
+			newSettings, cmd := m.settings.Update(msg)
+			if settingsModel, ok := newSettings.(ui.SettingsModel); ok {
+				m.settings = settingsModel
+			}
+			return m, cmd
+		}
+
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
@@ -83,14 +97,31 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			if m.cursor == len(m.choices)-1 {
+			switch m.cursor {
+			case 0: // General Settings
+				m.page = pageGeneral
+				m.settings = ui.NewGeneralSettingsModel(m.config)
+			case 1: // Decoration
+				m.page = pageDecoration
+				m.settings = ui.NewDecorationSettingsModel(m.config)
+			case 2: // Animations
+				m.page = pageAnimations
+				m.settings = ui.NewAnimationsSettingsModel(m.config)
+			case 3: // Input
+				m.page = pageInput
+				m.settings = ui.NewInputSettingsModel(m.config)
+			case 4: // Window Rules
+				m.page = pageWindowRules
+				m.settings = ui.NewWindowRulesSettingsModel(m.config)
+			case len(m.choices) - 1:
 				return m, tea.Quit
-			}
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
+			default:
+				_, ok := m.selected[m.cursor]
+				if ok {
+					delete(m.selected, m.cursor)
+				} else {
+					m.selected[m.cursor] = struct{}{}
+				}
 			}
 		}
 	}
@@ -115,7 +146,20 @@ func (m model) View() string {
 }
 
 func main() {
-	p := tea.NewProgram(initialModel())
+	// Create a channel for config saves
+	saveChan := make(chan config.HyprlandConfig)
+	
+	// Start a goroutine to handle config saves
+	go func() {
+		for cfg := range saveChan {
+			if err := config.WriteConfig(&cfg, ""); err != nil {
+				// TODO: Handle error
+				fmt.Printf("Error saving config: %v\n", err)
+			}
+		}
+	}()
+	
+	p := tea.NewProgram(initialModel(saveChan))
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error running program: %v", err)
 		os.Exit(1)
