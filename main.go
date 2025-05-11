@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/max-geller/hyprmax/config"
 )
 
 var (
@@ -24,21 +25,41 @@ var (
 )
 
 type model struct {
-	choices  []string
-	cursor   int
-	selected map[int]struct{}
+	config    *config.HyprlandConfig
+	choices   []string
+	cursor    int
+	selected  map[int]struct{}
+	err       error
+	page      page
 }
 
+type page int
+
+const (
+	pageMain page = iota
+	pageGeneral
+	pageDecoration
+	pageAnimations
+	pageInput
+	pageWindowRules
+)
+
 func initialModel() model {
+	cfg, err := config.LoadConfig("")
 	return model{
+		config: cfg,
+		err:    err,
 		choices: []string{
 			"General Settings",
+			"Decoration",
+			"Animations",
+			"Input",
 			"Window Rules",
 			"Keybindings",
-			"Animations",
-			"Quit",
+			"Save & Quit",
 		},
 		selected: make(map[int]struct{}),
+		page:     pageMain,
 	}
 }
 
