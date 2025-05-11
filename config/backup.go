@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,4 +31,4 @@ func BackupConfig(path string) error {
 	timestamp := time.Now().Format("20060102_150405")
 	backupPath := path + "." + timestamp + ".backup"
 	return os.WriteFile(backupPath, content, 0644)
-} 
+}

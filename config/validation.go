@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+// Add at the top of the file, after imports
+var validKeys = map[string]bool{
+	"Return": true, "Space": true, "Tab": true, "Backspace": true,
+}
+
 // ValidationError represents a configuration validation error
 type ValidationError struct {
 	Field   string
@@ -49,11 +54,6 @@ func ValidateBool(field, value string) error {
 }
 
 func ValidateKey(field, value string) error {
-	// Add validation for key names (like Return, a-z, 0-9, etc.)
-	validKeys := map[string]bool{
-		"Return": true, "Space": true, "Tab": true, "Backspace": true,
-		// Add more valid keys...
-	}
 	if !validKeys[value] {
 		return &ValidationError{field, value, "invalid key name"}
 	}
@@ -76,7 +76,7 @@ func ValidateKeybind(field, value string) error {
 	if len(parts) < 3 {
 		return &ValidationError{field, value, "must be in format: mods,key,dispatcher[,params]"}
 	}
-	
+
 	// Validate mods
 	validMods := map[string]bool{"SUPER": true, "ALT": true, "CTRL": true, "SHIFT": true}
 	mods := strings.Split(parts[0], "+")
@@ -85,12 +85,12 @@ func ValidateKeybind(field, value string) error {
 			return &ValidationError{field, mod, "invalid modifier key"}
 		}
 	}
-	
+
 	// Validate key
 	if err := ValidateKey(field, parts[1]); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -117,14 +117,14 @@ func ValidateRuleType(field, value string) error {
 
 func ValidateDispatcher(field, value string) error {
 	validDispatchers := map[string]bool{
-		"exec":          true,
-		"killactive":    true,
-		"workspace":     true,
+		"exec":           true,
+		"killactive":     true,
+		"workspace":      true,
 		"togglefloating": true,
-		"fullscreen":    true,
-		"pseudo":        true,
-		"movefocus":     true,
-		"movewindow":    true,
+		"fullscreen":     true,
+		"pseudo":         true,
+		"movefocus":      true,
+		"movewindow":     true,
 		// Add other valid dispatchers
 	}
 
@@ -156,4 +156,4 @@ func init() {
 	for _, key := range specialKeys {
 		validKeys[key] = true
 	}
-} 
+}

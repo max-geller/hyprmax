@@ -57,4 +57,4 @@ func TestWriteConfig(t *testing.T) {
 	if !strings.Contains(contentStr, "bind = SUPER, Return, exec, kitty") {
 		t.Error("Config missing terminal bind")
 	}
-} 
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/max-geller/hyprmax/config"
@@ -11,26 +12,26 @@ import (
 
 var (
 	settingStyle = lipgloss.NewStyle().
-		PaddingLeft(4)
-	
+			PaddingLeft(4)
+
 	valueStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#7dcfff"))
-	
+			Foreground(lipgloss.Color("#7dcfff"))
+
 	editStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#bb9af7")).
-		Bold(true)
-	
+			Foreground(lipgloss.Color("#bb9af7")).
+			Bold(true)
+
 	errorStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ff6666")).
-		PaddingLeft(4)
-	
+			Foreground(lipgloss.Color("#ff6666")).
+			PaddingLeft(4)
+
 	helpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#7dcfff")).
-		PaddingLeft(4)
-	
+			Foreground(lipgloss.Color("#7dcfff")).
+			PaddingLeft(4)
+
 	errorListStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ff6666")).
-		PaddingLeft(4)
+			Foreground(lipgloss.Color("#ff6666")).
+			PaddingLeft(4)
 )
 
 type settingsModel struct {
@@ -120,20 +121,20 @@ func (m settingsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m settingsModel) View() string {
 	var s string
-	s += titleStyle.Render(m.section + " Settings") + "\n\n"
+	s += titleStyle.Render(m.section+" Settings") + "\n\n"
 
 	// Show errors if present
 	if len(m.errors) > 0 {
 		s += errorStyle.Render("Errors:") + "\n"
 		for _, err := range m.errors {
-			s += errorListStyle.Render("• " + err) + "\n"
+			s += errorListStyle.Render("• "+err) + "\n"
 		}
 		s += "\n"
 	}
 
 	// Show help if enabled
 	if m.showHelp {
-		s += helpStyle.Render("Help for " + m.section) + "\n"
+		s += helpStyle.Render("Help for "+m.section) + "\n"
 		switch m.section {
 		case "Window Rules":
 			s += helpStyle.Render("Format: rule,value,target") + "\n"
@@ -147,7 +148,7 @@ func (m settingsModel) View() string {
 
 	// Show error message if present
 	if m.errorMsg != "" {
-		s += errorStyle.Render("Error: " + m.errorMsg) + "\n\n"
+		s += errorStyle.Render("Error: "+m.errorMsg) + "\n\n"
 	}
 
 	for i, setting := range m.settings {
@@ -175,9 +176,9 @@ func (m settingsModel) View() string {
 
 func (m *settingsModel) validateAndSave() error {
 	setting := m.settings[m.cursor]
-	
+
 	var err error
-	switch v := setting.value.(type) {
+	switch setting.value.(type) {
 	case int:
 		err = config.ValidateInt(setting.name, m.editValue, 0, 1000)
 		if err == nil {
@@ -200,12 +201,12 @@ func (m *settingsModel) validateAndSave() error {
 		// Add specific validation based on the field
 		m.updateConfigValue(setting.name, m.editValue)
 	}
-	
+
 	if err != nil {
 		m.errorMsg = err.Error()
 		return err
 	}
-	
+
 	m.errorMsg = "" // Clear error on success
 	return nil
 }
@@ -219,13 +220,13 @@ func (m *settingsModel) updateConfigValue(name string, value interface{}) {
 			m.config.General.BorderSize = value.(int)
 		case "Gaps In":
 			m.config.General.GapIn = value.(int)
-		// Add other cases...
+			// Add other cases...
 		}
 	case "Decoration":
 		// Handle decoration settings
-	// Add other sections...
+		// Add other sections...
 	}
-	
+
 	// Update the displayed value
 	for i, s := range m.settings {
 		if s.name == name {
@@ -233,4 +234,4 @@ func (m *settingsModel) updateConfigValue(name string, value interface{}) {
 			break
 		}
 	}
-} 
+}

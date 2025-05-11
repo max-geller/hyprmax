@@ -43,7 +43,7 @@ func generateConfig(config *HyprlandConfig) string {
 
 	// Write monitors
 	for _, monitor := range config.Monitors {
-		sb.WriteString(fmt.Sprintf("monitor=%s,%s,%s\n", 
+		sb.WriteString(fmt.Sprintf("monitor=%s,%s,%s\n",
 			monitor.Name, monitor.Resolution, monitor.Position))
 	}
 	sb.WriteString("\n")
@@ -78,4 +78,4 @@ func generateConfig(config *HyprlandConfig) string {
 	}
 
 	return sb.String()
-} 
+}

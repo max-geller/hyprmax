@@ -12,28 +12,28 @@ import (
 
 var (
 	titleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7dcfff")).
-		PaddingLeft(2)
+			Bold(true).
+			Foreground(lipgloss.Color("#7dcfff")).
+			PaddingLeft(2)
 
 	itemStyle = lipgloss.NewStyle().
-		PaddingLeft(4)
+			PaddingLeft(4)
 
 	selectedItemStyle = lipgloss.NewStyle().
-		PaddingLeft(2).
-		Foreground(lipgloss.Color("#bb9af7")).
-		SetString("► ")
+				PaddingLeft(2).
+				Foreground(lipgloss.Color("#bb9af7")).
+				SetString("► ")
 )
 
 type model struct {
-	config    *config.HyprlandConfig
-	choices   []string
-	cursor    int
-	selected  map[int]struct{}
-	err       error
-	page      page
-	settings  ui.SettingsModel
-	saveChan  chan<- config.HyprlandConfig
+	config   *config.HyprlandConfig
+	choices  []string
+	cursor   int
+	selected map[int]struct{}
+	err      error
+	page     page
+	settings ui.SettingsModel
+	saveChan chan<- config.HyprlandConfig
 }
 
 type page int
@@ -148,7 +148,7 @@ func (m model) View() string {
 func main() {
 	// Create a channel for config saves
 	saveChan := make(chan config.HyprlandConfig)
-	
+
 	// Start a goroutine to handle config saves
 	go func() {
 		for cfg := range saveChan {
@@ -158,10 +158,10 @@ func main() {
 			}
 		}
 	}()
-	
+
 	p := tea.NewProgram(initialModel(saveChan))
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error running program: %v", err)
 		os.Exit(1)
 	}
-} 
+}

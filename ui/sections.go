@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+
 	"github.com/max-geller/hyprmax/config"
 )
 
@@ -78,16 +79,16 @@ func NewWindowRulesSettingsModel(cfg *config.HyprlandConfig) SettingsModel {
 	settings := []setting{
 		{"Add New Rule", "New", true},
 	}
-	
+
 	for i, rule := range cfg.WindowRules {
 		name := fmt.Sprintf("Rule %d", i+1)
 		value := fmt.Sprintf("%s,%s,%s", rule.Rule, rule.Value, rule.Target)
 		settings = append(settings, setting{name, value, true})
 	}
-	
+
 	return settingsModel{
-		config:  cfg,
-		section: "Window Rules",
+		config:   cfg,
+		section:  "Window Rules",
 		settings: settings,
 	}
 }
@@ -97,7 +98,7 @@ func NewKeybindingsSettingsModel(cfg *config.HyprlandConfig) SettingsModel {
 	settings := []setting{
 		{"Add New Binding", "New", true},
 	}
-	
+
 	for i, bind := range cfg.Binds {
 		name := fmt.Sprintf("Bind %d", i+1)
 		if bind.Description != "" {
@@ -106,12 +107,12 @@ func NewKeybindingsSettingsModel(cfg *config.HyprlandConfig) SettingsModel {
 		value := fmt.Sprintf("%s + %s → %s %s", bind.Mods, bind.Key, bind.Dispatcher, bind.Params)
 		settings = append(settings, setting{name, value, true})
 	}
-	
+
 	return settingsModel{
-		config:  cfg,
-		section: "Keybindings",
+		config:   cfg,
+		section:  "Keybindings",
 		settings: settings,
 	}
 }
 
-// Add other section models... 
+// Add other section models...

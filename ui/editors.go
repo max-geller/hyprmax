@@ -3,8 +3,6 @@ package ui
 import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/max-geller/hyprmax/config"
 )
 
 // EditorMode represents different editing modes
@@ -61,7 +59,7 @@ func NewBindEditor(parent SettingsModel) editorModel {
 
 func (e editorModel) View() string {
 	var s string
-	
+
 	switch e.mode {
 	case ModeNewRule:
 		s += titleStyle.Render("New Window Rule") + "\n\n"
@@ -89,4 +87,28 @@ func (e editorModel) View() string {
 
 	s += "\n" + itemStyle.Render("(↑/↓) navigate • (enter) edit • (esc) cancel • (ctrl+s) save")
 	return s
-} 
+}
+
+// Add these methods to implement tea.Model
+func (e editorModel) Init() tea.Cmd {
+	return nil
+}
+
+func (e editorModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+			return e.parentView, nil
+		case "up", "k":
+			if e.cursor > 0 {
+				e.cursor--
+			}
+		case "down", "j":
+			if e.cursor < len(e.fields)-1 {
+				e.cursor++
+			}
+		}
+	}
+	return e, nil
+}

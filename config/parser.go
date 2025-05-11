@@ -26,7 +26,7 @@ func LoadConfig(path string, testMode bool) (*HyprlandConfig, error) {
 			return nil, fmt.Errorf("failed to create backup: %w", err)
 		}
 	}
-	
+
 	// Expand home directory
 	if strings.HasPrefix(path, "~/") {
 		home, err := os.UserHomeDir()
@@ -44,10 +44,10 @@ func LoadConfig(path string, testMode bool) (*HyprlandConfig, error) {
 
 	config := &HyprlandConfig{}
 	scanner := bufio.NewScanner(file)
-	
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		
+
 		// Skip comments and empty lines
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
@@ -99,7 +99,7 @@ func parseMonitor(value string, config *HyprlandConfig) error {
 
 func parseSection(line string, config *HyprlandConfig) error {
 	sectionName := strings.TrimSpace(strings.Split(line, "{")[0])
-	
+
 	switch sectionName {
 	case "general":
 		return parseGeneralSection(line, config)
@@ -107,7 +107,7 @@ func parseSection(line string, config *HyprlandConfig) error {
 		return parseDecorationSection(line, config)
 	case "animations":
 		return parseAnimationsSection(line, config)
-	// Add other sections as needed
+		// Add other sections as needed
 	}
 
 	return fmt.Errorf("unknown section: %s", sectionName)
@@ -119,12 +119,20 @@ func parseAssignment(line string, config *HyprlandConfig) error {
 	if len(parts) != 2 {
 		return fmt.Errorf("invalid assignment: %s", line)
 	}
-	
+
 	key := strings.TrimSpace(parts[0])
 	value := strings.TrimSpace(parts[1])
-	
-	// TODO: Handle global assignments
-	return fmt.Errorf("unhandled assignment: %s", key)
+
+	switch key {
+	case "monitor":
+		return parseMonitor(value, config)
+	case "bind":
+		return parseKeybind(value, config)
+	case "workspace":
+		return parseWorkspace(value, config)
+	default:
+		return fmt.Errorf("unknown setting: %s", key)
+	}
 }
 
 // Helper function to parse section content
@@ -145,10 +153,10 @@ func newSectionParser(line string) *sectionParser {
 func (sp *sectionParser) parseBlock() (map[string]string, error) {
 	values := make(map[string]string)
 	var currentLine string
-	
+
 	for sp.pos < len(sp.content) {
 		char := sp.content[sp.pos]
-		
+
 		switch char {
 		case '{':
 			sp.inBlock = true
@@ -172,7 +180,7 @@ func (sp *sectionParser) parseBlock() (map[string]string, error) {
 		}
 		sp.pos++
 	}
-	
+
 	return values, nil
 }
 
@@ -182,7 +190,7 @@ func parseGeneralSection(line string, config *HyprlandConfig) error {
 	if err != nil {
 		return err
 	}
-	
+
 	// Parse values into GeneralSection struct
 	for key, value := range values {
 		switch key {
@@ -206,7 +214,7 @@ func parseGeneralSection(line string, config *HyprlandConfig) error {
 			config.General.NoFocusFollowMouse = value == "true"
 		}
 	}
-	
+
 	return nil
 }
 
@@ -216,7 +224,7 @@ func parseDecorationSection(line string, config *HyprlandConfig) error {
 	if err != nil {
 		return err
 	}
-	
+
 	for key, value := range values {
 		switch key {
 		case "rounding":
@@ -251,7 +259,7 @@ func parseDecorationSection(line string, config *HyprlandConfig) error {
 			config.Decoration.ShadowColor = value
 		}
 	}
-	
+
 	return nil
 }
 
@@ -261,16 +269,52 @@ func parseAnimationsSection(line string, config *HyprlandConfig) error {
 	if err != nil {
 		return err
 	}
-	
+
 	for key, value := range values {
 		switch key {
 		case "enabled":
 			config.Animations.Enabled = value == "true"
-		// Add other animation settings as needed
+			// Add other animation settings as needed
 		}
 	}
-	
+
 	return nil
 }
 
-// Add other parsing functions... 
+func parseKeybind(value string, config *HyprlandConfig) error {
+	parts := strings.Split(value, ",")
+	if len(parts) < 4 {
+		return fmt.Errorf("invalid keybind: %s", value)
+	}
+
+	bind := Bind{
+		Mods:       strings.TrimSpace(parts[0]),
+		Key:        strings.TrimSpace(parts[1]),
+		Dispatcher: strings.TrimSpace(parts[2]),
+		Params:     strings.TrimSpace(parts[3]),
+	}
+
+	if len(parts) > 4 {
+		bind.Description = strings.TrimSpace(parts[4])
+	}
+
+	config.Binds = append(config.Binds, bind)
+	return nil
+}
+
+func parseWorkspace(value string, config *HyprlandConfig) error {
+	parts := strings.Split(value, ",")
+	if len(parts) != 2 {
+		return fmt.Errorf("invalid workspace: %s", value)
+	}
+
+	workspace := Workspace{
+		Name:    strings.TrimSpace(parts[0]),
+		Monitor: strings.TrimSpace(parts[1]),
+	}
+
+	config.Workspaces = append(config.Workspaces, workspace)
+	return nil
+}
+
+// Add other parsing functions...
