@@ -3,6 +3,7 @@
 ## Safety Measures
 
 ### Test Mode
+
 The application runs in test mode during development to prevent accidental modifications to the user's active Hyprland configuration.
 
 ```go
@@ -11,9 +12,11 @@ cfg, err := config.LoadConfig("", true) // true enables test mode
 ```
 
 Test mode uses a separate configuration file located at:
+
 - `config/testdata/hyprland.conf`
 
 ### Backup System
+
 Before any modifications to the real configuration file, the system automatically creates timestamped backups:
 
 ```
@@ -21,6 +24,7 @@ Before any modifications to the real configuration file, the system automaticall
 ```
 
 Backup files are created:
+
 - Before loading the real config file
 - Before saving any changes
 - With timestamp format: YYYYMMDD_HHMMSS
@@ -28,11 +32,13 @@ Backup files are created:
 ## Configuration Handling
 
 ### File Locations
+
 - Default config: `~/.config/hypr/hyprland.conf`
 - Test config: `config/testdata/hyprland.conf`
 - Backup configs: `~/.config/hypr/hyprland.conf.[timestamp].backup`
 
 ### Config Loading Process
+
 1. Check if test mode is enabled
 2. Determine correct config path
 3. Create backup if using real config
@@ -42,6 +48,7 @@ Backup files are created:
 ## Development Workflow
 
 ### Testing New Features
+
 1. Modify test configuration in `config/testdata/hyprland.conf`
 2. Run application in test mode
 3. Verify changes work as expected
@@ -49,6 +56,7 @@ Backup files are created:
 5. Test with real configuration
 
 ### Before Production Use
+
 - [ ] Verify backup system works
 - [ ] Add user confirmations for changes
 - [ ] Test backup restoration
@@ -58,6 +66,7 @@ Backup files are created:
 ## Safety Checklist
 
 Before modifying real config:
+
 - [ ] Backup exists
 - [ ] Changes are validated
 - [ ] User confirmed action
