@@ -45,7 +45,8 @@ const (
 )
 
 func initialModel() model {
-	cfg, err := config.LoadConfig("")
+	// Use test mode during development
+	cfg, err := config.LoadConfig("", true)
 	return model{
 		config: cfg,
 		err:    err,

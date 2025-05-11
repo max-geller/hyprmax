@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,10 +11,19 @@ import (
 // DefaultConfigPath is the default location of hyprland.conf
 const DefaultConfigPath = "~/.config/hypr/hyprland.conf"
 
+// TestConfigPath is the path to the test configuration file
+const TestConfigPath = "config/testdata/hyprland.conf"
+
 // LoadConfig reads and parses the Hyprland configuration file
-func LoadConfig(path string) (*HyprlandConfig, error) {
-	if path == "" {
+func LoadConfig(path string, testMode bool) (*HyprlandConfig, error) {
+	if testMode {
+		path = TestConfigPath
+	} else if path == "" {
 		path = DefaultConfigPath
+		// Create backup before loading real config
+		if err := BackupConfig(path); err != nil {
+			return nil, fmt.Errorf("failed to create backup: %w", err)
+		}
 	}
 	
 	// Expand home directory
